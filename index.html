@@ -8,20 +8,39 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
     <style>
+        :root {
+            --primary: #0A192F;
+            --secondary: #112240;
+            --accent: #64FFDA;
+            --text: #E6F1FF;
+            --text-muted: #8892B0;
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0A192F; /* Fallback color */
-            background-image: linear-gradient(to bottom right, #0A192F, #112240);
-            color: #E6F1FF; /* Light blueish-white for text */
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
         }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
         .nav-link {
             position: relative;
             transition: color 0.3s ease;
         }
+        
         .nav-link.active, .nav-link:hover {
-            color: #64FFDA; /* Minty accent color */
+            color: var(--accent);
         }
+        
         .nav-link::after {
             content: '';
             position: absolute;
@@ -29,68 +48,286 @@
             height: 2px;
             bottom: -4px;
             left: 50%;
-            background-color: #64FFDA;
+            background-color: var(--accent);
             transition: all 0.3s ease-in-out;
             transform: translateX(-50%);
         }
+        
         .nav-link.active::after, .nav-link:hover::after {
             width: 100%;
         }
+        
         .cta-button {
             display: inline-block;
             background-color: transparent;
-            border: 1px solid #64FFDA;
-            color: #64FFDA;
+            border: 1px solid var(--accent);
+            color: var(--accent);
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
             font-weight: 500;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(100, 255, 218, 0.2), transparent);
+            transition: left 0.7s ease;
+            z-index: -1;
+        }
+        
         .cta-button:hover {
             background-color: rgba(100, 255, 218, 0.1);
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(100, 255, 218, 0.2);
         }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
         .glass-card {
-            background: rgba(10, 25, 47, 0.85); /* Slightly transparent dark blue */
+            background: rgba(10, 25, 47, 0.85);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(45, 212, 191, 0.1);
             border-radius: 0.75rem;
             transition: all 0.3s ease;
         }
+        
         .glass-card:hover {
             transform: translateY(-5px);
             border-color: rgba(100, 255, 218, 0.3);
         }
+        
         .page-section {
-            display: none; /* Hidden by default */
-            animation: fadeIn 0.8s ease-in-out;
-        }
-        .page-section.active {
-            display: block; /* Shown when active */
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .reveal {
+            display: none;
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(20px);
         }
-        .reveal.visible {
+        
+        .page-section.active {
+            display: block;
             opacity: 1;
             transform: translateY(0);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .text-gradient {
+            background: linear-gradient(90deg, var(--accent), #4FD1C5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .magnetic {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        
+        .magnetic:hover {
+            transform: scale(1.05);
+        }
+        
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        /* Success animation */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+        
+        .success-checkmark .check-icon {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            border-radius: 50%;
+            box-sizing: content-box;
+            border: 4px solid var(--accent);
+        }
+        
+        .success-checkmark .check-icon::before {
+            top: 3px;
+            left: -2px;
+            width: 30px;
+            transform-origin: 100% 50%;
+            border-radius: 100px 0 0 100px;
+        }
+        
+        .success-checkmark .check-icon::after {
+            top: 0;
+            left: 30px;
+            width: 60px;
+            transform-origin: 0 50%;
+            border-radius: 0 100px 100px 0;
+            animation: rotate-circle 4.25s ease-in;
+        }
+        
+        .success-checkmark .check-icon .icon-line {
+            height: 5px;
+            background-color: var(--accent);
+            display: block;
+            border-radius: 2px;
+            position: absolute;
+            z-index: 10;
+        }
+        
+        .success-checkmark .check-icon .icon-line.line-tip {
+            top: 46px;
+            left: 14px;
+            width: 25px;
+            transform: rotate(45deg);
+            animation: icon-line-tip 0.75s;
+        }
+        
+        .success-checkmark .check-icon .icon-line.line-long {
+            top: 38px;
+            right: 8px;
+            width: 47px;
+            transform: rotate(-45deg);
+            animation: icon-line-long 0.75s;
+        }
+        
+        .success-checkmark .check-icon .icon-circle {
+            top: -4px;
+            left: -4px;
+            z-index: 10;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+            box-sizing: content-box;
+            border: 4px solid rgba(100, 255, 218, 0.5);
+        }
+        
+        .success-checkmark .check-icon .icon-fix {
+            top: 8px;
+            width: 5px;
+            left: 26px;
+            z-index: 1;
+            height: 85px;
+            position: absolute;
+            transform: rotate(-45deg);
+            background-color: var(--primary);
+        }
+        
+        @keyframes rotate-circle {
+            0% { transform: rotate(-45deg); }
+            5% { transform: rotate(-45deg); }
+            12% { transform: rotate(-405deg); }
+            100% { transform: rotate(-405deg); }
+        }
+        
+        @keyframes icon-line-tip {
+            0% { width: 0; left: 1px; top: 19px; }
+            54% { width: 0; left: 1px; top: 19px; }
+            70% { width: 50px; left: -8px; top: 37px; }
+            84% { width: 17px; left: 21px; top: 48px; }
+            100% { width: 25px; left: 14px; top: 45px; }
+        }
+        
+        @keyframes icon-line-long {
+            0% { width: 0; right: 46px; top: 54px; }
+            65% { width: 0; right: 46px; top: 54px; }
+            84% { width: 55px; right: 0px; top: 35px; }
+            100% { width: 47px; right: 8px; top: 38px; }
+        }
+        
+        /* Mobile menu animation */
+        .mobile-menu-enter {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .mobile-menu-enter-active {
+            transform: translateX(0);
+            opacity: 1;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .mobile-menu-exit {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .mobile-menu-exit-active {
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .glass-card {
+                margin-bottom: 1.5rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-grid {
+                gap: 2rem;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4FD1C5;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased gradient-bg">
 
     <!-- ======== HEADER & NAVIGATION BAR ======== -->
     <header class="sticky top-0 z-50 bg-opacity-80 backdrop-blur-md border-b border-gray-800">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white transition-colors hover:text-[#64FFDA]" data-page="home">
+            <a href="#" class="text-2xl font-bold text-white transition-colors hover:text-[#64FFDA] magnetic" data-page="home">
                 AppConsole
             </a>
             <div class="hidden md:flex items-center space-x-8">
@@ -99,16 +336,16 @@
                 <a href="#" class="nav-link" data-page="contact">Contact Us</a>
             </div>
             <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                <button id="mobile-menu-button" class="text-white focus:outline-none magnetic">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
         </nav>
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
-            <a href="#" class="block py-2 text-white hover:text-[#64FFDA] mobile-nav-link" data-page="home">Home</a>
-            <a href="#" class="block py-2 text-white hover:text-[#64FFDA] mobile-nav-link" data-page="services">Services</a>
-            <a href="#" class="block py-2 text-white hover:text-[#64FFDA] mobile-nav-link" data-page="contact">Contact Us</a>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 absolute top-full left-0 w-full bg-[#0A192F] bg-opacity-95 backdrop-blur-md border-b border-gray-800">
+            <a href="#" class="block py-3 text-white hover:text-[#64FFDA] mobile-nav-link text-center" data-page="home">Home</a>
+            <a href="#" class="block py-3 text-white hover:text-[#64FFDA] mobile-nav-link text-center" data-page="services">Services</a>
+            <a href="#" class="block py-3 text-white hover:text-[#64FFDA] mobile-nav-link text-center" data-page="contact">Contact Us</a>
         </div>
     </header>
 
@@ -117,57 +354,62 @@
         <!-- ======== HOME PAGE SECTION ======== -->
         <section id="home" class="page-section active">
             <!-- Hero Section -->
-            <div class="text-center min-h-[60vh] flex flex-col justify-center items-center">
-                <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
-                    Your Vision, <span class="text-[#64FFDA]">Engineered for Impact.</span>
+            <div class="text-center min-h-[60vh] flex flex-col justify-center items-center relative overflow-hidden">
+                <!-- Floating background elements -->
+                <div class="absolute top-10 left-10 w-20 h-20 rounded-full bg-[#64FFDA] opacity-10 floating-element"></div>
+                <div class="absolute bottom-20 right-10 w-16 h-16 rounded-full bg-[#64FFDA] opacity-10 floating-element" style="animation-delay: 2s;"></div>
+                <div class="absolute top-1/3 right-1/4 w-12 h-12 rounded-full bg-[#64FFDA] opacity-10 floating-element" style="animation-delay: 4s;"></div>
+                
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4 hero-title">
+                    Your Vision, <span class="text-gradient">Engineered for Impact.</span>
                 </h1>
-                <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 mb-8">
+                <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 mb-8 reveal-item">
                     We build stunning mobile apps, dynamic websites, and powerful marketing strategies that captivate your audience and drive growth.
                 </p>
-                <button class="cta-button nav-link-cta" data-page="contact">Get a Free Consultation</button>
+                <button class="cta-button text-lg magnetic reveal-item" data-page="contact">Get a Free Consultation</button>
             </div>
 
             <!-- Services Overview -->
             <div class="py-20">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Our Core Services</h2>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 reveal-item">Our Core Services</h2>
                 <div class="grid md:grid-cols-3 gap-8">
                     <!-- Application Development Card -->
-                    <div class="glass-card p-8 text-center reveal">
+                    <div class="glass-card p-8 text-center reveal-item">
                         <svg class="w-12 h-12 mx-auto mb-4 text-[#64FFDA]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                         <h3 class="text-2xl font-semibold mb-3 text-white">Application Development</h3>
                         <p class="text-gray-400 mb-6">From concept to launch, we create intuitive and powerful mobile applications for iOS & Android.</p>
-                        <button class="font-medium text-[#64FFDA] hover:underline nav-link-cta" data-page="services">Learn More &rarr;</button>
+                        <button class="font-medium text-[#64FFDA] hover:underline magnetic" data-page="services">Learn More &rarr;</button>
                     </div>
                     <!-- Website Development Card -->
-                    <div class="glass-card p-8 text-center reveal" style="transition-delay: 100ms;">
+                    <div class="glass-card p-8 text-center reveal-item">
                         <svg class="w-12 h-12 mx-auto mb-4 text-[#64FFDA]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                         <h3 class="text-2xl font-semibold mb-3 text-white">Website Development</h3>
                         <p class="text-gray-400 mb-6">Responsive, secure, and SEO-friendly websites that deliver an exceptional user experience.</p>
-                        <button class="font-medium text-[#64FFDA] hover:underline nav-link-cta" data-page="services">Learn More &rarr;</button>
+                        <button class="font-medium text-[#64FFDA] hover:underline magnetic" data-page="services">Learn More &rarr;</button>
                     </div>
                     <!-- Marketing & SEO Card -->
-                    <div class="glass-card p-8 text-center reveal" style="transition-delay: 200ms;">
+                    <div class="glass-card p-8 text-center reveal-item">
                          <svg class="w-12 h-12 mx-auto mb-4 text-[#64FFDA]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         <h3 class="text-2xl font-semibold mb-3 text-white">Marketing & SEO</h3>
                         <p class="text-gray-400 mb-6">Boost your online presence with data-driven marketing and SEO strategies that deliver results.</p>
-                        <button class="font-medium text-[#64FFDA] hover:underline nav-link-cta" data-page="services">Learn More &rarr;</button>
+                        <button class="font-medium text-[#64FFDA] hover:underline magnetic" data-page="services">Learn More &rarr;</button>
                     </div>
                 </div>
             </div>
 
             <!-- Why Choose Us Section -->
             <div class="py-20">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Why Partner with AppConsole?</h2>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 reveal-item">Why Partner with AppConsole?</h2>
                 <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-center">
-                    <div class="reveal">
+                    <div class="reveal-item">
                         <h4 class="text-2xl font-semibold text-[#64FFDA] mb-2">Tailored Solutions</h4>
                         <p class="text-gray-400">We don't believe in one-size-fits-all. Every project is uniquely crafted to meet your specific business goals.</p>
                     </div>
-                    <div class="reveal" style="transition-delay: 100ms;">
+                    <div class="reveal-item">
                         <h4 class="text-2xl font-semibold text-[#64FFDA] mb-2">Expert Team</h4>
                         <p class="text-gray-400">Our team of developers, designers, and marketers are dedicated to excellence and passionate about technology.</p>
                     </div>
-                    <div class="reveal" style="transition-delay: 200ms;">
+                    <div class="reveal-item">
                         <h4 class="text-2xl font-semibold text-[#64FFDA] mb-2">Results-Driven</h4>
                         <p class="text-gray-400">Your success is our metric. We focus on delivering measurable results that help your business thrive.</p>
                     </div>
@@ -176,22 +418,22 @@
 
             <!-- Call to Action Section -->
             <div class="text-center py-20">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Start Your Project?</h2>
-                <p class="max-w-2xl mx-auto text-gray-300 mb-8">Let's discuss how we can help you achieve your goals. Reach out today for a no-obligation consultation.</p>
-                <button class="cta-button text-lg nav-link-cta" data-page="contact">Let's Talk</button>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 reveal-item">Ready to Start Your Project?</h2>
+                <p class="max-w-2xl mx-auto text-gray-300 mb-8 reveal-item">Let's discuss how we can help you achieve your goals. Reach out today for a no-obligation consultation.</p>
+                <button class="cta-button text-lg magnetic reveal-item" data-page="contact">Let's Talk</button>
             </div>
         </section>
 
         <!-- ======== SERVICES PAGE SECTION ======== -->
         <section id="services" class="page-section">
             <div class="text-center mb-20">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-white">What We Do</h1>
-                <p class="mt-4 text-lg text-gray-300">We offer a comprehensive suite of digital services to elevate your brand.</p>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white reveal-item">What We Do</h1>
+                <p class="mt-4 text-lg text-gray-300 reveal-item">We offer a comprehensive suite of digital services to elevate your brand.</p>
             </div>
 
-            <div class="space-y-16">
+            <div class="space-y-16 service-grid">
                 <!-- Application Development -->
-                <div class="grid md:grid-cols-2 gap-12 items-center reveal">
+                <div class="grid md:grid-cols-2 gap-12 items-center reveal-item">
                     <div>
                         <h2 class="text-3xl font-bold text-white mb-4">Application Development</h2>
                         <p class="text-gray-300 mb-6">We turn your ideas into high-performance mobile applications for iOS and Android. Our process ensures your app is not only beautiful and intuitive but also scalable and secure.</p>
@@ -201,14 +443,14 @@
                             <li class="flex items-start"><span class="text-[#64FFDA] mr-3 mt-1">&#10003;</span> Backend & API Integration</li>
                             <li class="flex items-start"><span class="text-[#64FFDA] mr-3 mt-1">&#10003;</span> App Store Submission & Support</li>
                         </ul>
-                        <button class="cta-button mt-8 nav-link-cta" data-page="contact">Discuss Your App Idea</button>
+                        <button class="cta-button mt-8 magnetic" data-page="contact">Discuss Your App Idea</button>
                     </div>
-                    <div class="p-4 glass-card"><img src="https://placehold.co/600x400/0A192F/64FFDA?text=App+Development" alt="App Development" class="rounded-lg shadow-xl"></div>
+                    <div class="p-4 glass-card floating-element"><img src="https://placehold.co/600x400/0A192F/64FFDA?text=App+Development" alt="App Development" class="rounded-lg shadow-xl w-full"></div>
                 </div>
 
                 <!-- Website Development -->
-                 <div class="grid md:grid-cols-2 gap-12 items-center reveal">
-                    <div class="p-4 glass-card md:order-last"><img src="https://placehold.co/600x400/0A192F/64FFDA?text=Website+Development" alt="Website Development" class="rounded-lg shadow-xl"></div>
+                 <div class="grid md:grid-cols-2 gap-12 items-center reveal-item">
+                    <div class="p-4 glass-card floating-element md:order-last"><img src="https://placehold.co/600x400/0A192F/64FFDA?text=Website+Development" alt="Website Development" class="rounded-lg shadow-xl w-full"></div>
                     <div class="md:order-first">
                         <h2 class="text-3xl font-bold text-white mb-4">Website Development</h2>
                         <p class="text-gray-300 mb-6">Your website is your digital storefront. We build fast, responsive websites that look great on any device, from landing pages to complex e-commerce platforms.</p>
@@ -218,12 +460,12 @@
                             <li class="flex items-start"><span class="text-[#64FFDA] mr-3 mt-1">&#10003;</span> Custom Web Applications</li>
                             <li class="flex items-start"><span class="text-[#64FFDA] mr-3 mt-1">&#10003;</span> Website Maintenance & Security</li>
                         </ul>
-                        <button class="cta-button mt-8 nav-link-cta" data-page="contact">Build Your Website</button>
+                        <button class="cta-button mt-8 magnetic" data-page="contact">Build Your Website</button>
                     </div>
                 </div>
 
                 <!-- Marketing & SEO -->
-                <div class="grid md:grid-cols-2 gap-12 items-center reveal">
+                <div class="grid md:grid-cols-2 gap-12 items-center reveal-item">
                     <div>
                         <h2 class="text-3xl font-bold text-white mb-4">Marketing & SEO</h2>
                         <p class="text-gray-300 mb-6">A great product deserves a great audience. Our data-driven marketing and SEO services are designed to increase your visibility, attract qualified traffic, and grow your user base.</p>
@@ -233,9 +475,9 @@
                             <li class="flex items-start"><span class="text-[#64FFDA] mr-3 mt-1">&#10003;</span> Content & Social Media Marketing</li>
                             <li class="flex items-start"><span class="text-[#64FFDA] mr-3 mt-1">&#10003;</span> Analytics & Performance Reporting</li>
                         </ul>
-                        <button class="cta-button mt-8 nav-link-cta" data-page="contact">Boost Your Visibility</button>
+                        <button class="cta-button mt-8 magnetic" data-page="contact">Boost Your Visibility</button>
                     </div>
-                    <div class="p-4 glass-card"><img src="https://placehold.co/600x400/0A192F/64FFDA?text=Marketing+%26+SEO" alt="Marketing and SEO" class="rounded-lg shadow-xl"></div>
+                    <div class="p-4 glass-card floating-element"><img src="https://placehold.co/600x400/0A192F/64FFDA?text=Marketing+%26+SEO" alt="Marketing and SEO" class="rounded-lg shadow-xl w-full"></div>
                 </div>
             </div>
         </section>
@@ -243,11 +485,11 @@
         <!-- ======== CONTACT PAGE SECTION ======== -->
         <section id="contact" class="page-section">
             <div class="text-center mb-16">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-white">Get in Touch</h1>
-                <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">We'd love to hear about your project. Fill out the form below, and we'll get back to you shortly.</p>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white reveal-item">Get in Touch</h1>
+                <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto reveal-item">We'd love to hear about your project. Fill out the form below, and we'll get back to you shortly.</p>
             </div>
             
-            <div class="max-w-4xl mx-auto glass-card p-8 md:p-12">
+            <div class="max-w-4xl mx-auto glass-card p-8 md:p-12 reveal-item">
                 <form action="#" method="POST" id="contact-form">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="form-group">
@@ -280,8 +522,17 @@
                         <button type="submit" class="cta-button text-lg">Send Message</button>
                     </div>
                 </form>
-                <div id="form-success-message" class="hidden mt-6 p-4 text-center text-sm text-[#64FFDA] bg-green-900 bg-opacity-50 rounded-lg">
-                    Thank you! Your message has been sent successfully. We'll be in touch soon.
+                <div id="form-success" class="hidden mt-6 p-8 text-center">
+                    <div class="success-checkmark mb-4">
+                        <div class="check-icon">
+                            <span class="icon-line line-tip"></span>
+                            <span class="icon-line line-long"></span>
+                            <div class="icon-circle"></div>
+                            <div class="icon-fix"></div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#64FFDA] mb-2">Thank You!</h3>
+                    <p class="text-gray-300">Your message has been sent successfully. We'll be in touch soon.</p>
                 </div>
             </div>
         </section>
@@ -297,27 +548,63 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize GSAP plugins
+            gsap.registerPlugin(ScrollTrigger, TextPlugin);
+            
             const navLinks = document.querySelectorAll('.nav-link');
             const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-            const ctaLinks = document.querySelectorAll('.nav-link-cta');
+            const ctaLinks = document.querySelectorAll('.cta-button, .nav-link-cta');
             const pageSections = document.querySelectorAll('.page-section');
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
-            const revealElements = document.querySelectorAll('.reveal');
-
+            const revealItems = document.querySelectorAll('.reveal-item');
+            const contactForm = document.getElementById('contact-form');
+            const formSuccess = document.getElementById('form-success');
+            const logo = document.querySelector('a[data-page="home"]');
+            
+            let isMobileMenuOpen = false;
+            
+            // Page navigation function
             function showPage(pageId) {
-                // Hide all sections
-                pageSections.forEach(section => {
-                    section.classList.remove('active');
-                });
-
-                // Show the target section
-                const targetPage = document.getElementById(pageId);
-                if (targetPage) {
-                    targetPage.classList.add('active');
+                // Animate out current page
+                const currentActive = document.querySelector('.page-section.active');
+                if (currentActive) {
+                    gsap.to(currentActive, {
+                        opacity: 0,
+                        y: 20,
+                        duration: 0.5,
+                        ease: "power2.inOut",
+                        onComplete: () => {
+                            currentActive.classList.remove('active');
+                            
+                            // Show new page
+                            const targetPage = document.getElementById(pageId);
+                            if (targetPage) {
+                                targetPage.classList.add('active');
+                                gsap.fromTo(targetPage, 
+                                    { opacity: 0, y: 20 }, 
+                                    { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+                                );
+                                
+                                // Animate in reveal items for the new page
+                                animateRevealItems(targetPage);
+                            }
+                        }
+                    });
+                } else {
+                    // Initial page load
+                    const targetPage = document.getElementById(pageId);
+                    if (targetPage) {
+                        targetPage.classList.add('active');
+                        gsap.fromTo(targetPage, 
+                            { opacity: 0, y: 20 }, 
+                            { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+                        );
+                        animateRevealItems(targetPage);
+                    }
                 }
-
-                // Update active state for nav links
+                
+                // Update active nav link
                 navLinks.forEach(link => {
                     if (link.dataset.page === pageId) {
                         link.classList.add('active');
@@ -326,45 +613,170 @@
                     }
                 });
                 
-                // Close mobile menu after navigation
-                mobileMenu.classList.add('hidden');
+                // Close mobile menu if open
+                if (isMobileMenuOpen) {
+                    toggleMobileMenu();
+                }
                 
-                // Scroll to top of page
+                // Scroll to top
                 window.scrollTo(0, 0);
             }
-
-            // Intersection Observer for reveal animations
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
+            
+            // Animate reveal items in a specific section
+            function animateRevealItems(section) {
+                const items = section.querySelectorAll('.reveal-item');
+                gsap.fromTo(items, 
+                    { opacity: 0, y: 30 }, 
+                    { 
+                        opacity: 1, 
+                        y: 0, 
+                        duration: 0.8, 
+                        stagger: 0.1, 
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: section,
+                            start: "top 80%",
+                            toggleActions: "play none none none"
+                        }
+                    }
+                );
+            }
+            
+            // Initialize scroll animations for the home page
+            function initScrollAnimations() {
+                // Animate all reveal items on page load
+                gsap.fromTo(revealItems, 
+                    { opacity: 0, y: 30 }, 
+                    { 
+                        opacity: 1, 
+                        y: 0, 
+                        duration: 0.8, 
+                        stagger: 0.1, 
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: ".page-section.active",
+                            start: "top 80%",
+                            toggleActions: "play none none none"
+                        }
+                    }
+                );
+                
+                // Add parallax effect to floating elements
+                gsap.to('.floating-element', {
+                    y: -20,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: "body",
+                        start: "top bottom",
+                        end: "bottom top",
+                        scrub: true
                     }
                 });
-            }, {
-                threshold: 0.1
-            });
-
-            revealElements.forEach(el => {
-                observer.observe(el);
-            });
-
-            // Event listeners for desktop nav
+            }
+            
+            // Mobile menu toggle function
+            function toggleMobileMenu() {
+                if (isMobileMenuOpen) {
+                    // Close menu
+                    gsap.to(mobileMenu, {
+                        opacity: 0,
+                        y: -10,
+                        duration: 0.3,
+                        ease: "power2.inOut",
+                        onComplete: () => {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    });
+                } else {
+                    // Open menu
+                    mobileMenu.classList.remove('hidden');
+                    gsap.fromTo(mobileMenu, 
+                        { opacity: 0, y: -10 }, 
+                        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
+                    );
+                }
+                isMobileMenuOpen = !isMobileMenuOpen;
+            }
+            
+            // Contact form submission handler
+            function handleFormSubmit(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = "Sending...";
+                submitBtn.disabled = true;
+                
+                // Simulate API call with timeout
+                setTimeout(() => {
+                    // Hide form and show success message
+                    gsap.to(contactForm, {
+                        opacity: 0,
+                        y: -20,
+                        duration: 0.5,
+                        ease: "power2.inOut",
+                        onComplete: () => {
+                            contactForm.classList.add('hidden');
+                            formSuccess.classList.remove('hidden');
+                            gsap.fromTo(formSuccess, 
+                                { opacity: 0, y: 20 }, 
+                                { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+                            );
+                            
+                            // Reset form
+                            contactForm.reset();
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    });
+                }, 1500);
+            }
+            
+            // Magnetic button effect
+            function initMagneticButtons() {
+                const magneticButtons = document.querySelectorAll('.magnetic');
+                
+                magneticButtons.forEach(button => {
+                    button.addEventListener('mousemove', function(e) {
+                        const position = this.getBoundingClientRect();
+                        const x = e.pageX - position.left - position.width / 2;
+                        const y = e.pageY - position.top - position.height / 2;
+                        
+                        gsap.to(this, {
+                            x: x * 0.3,
+                            y: y * 0.3,
+                            duration: 0.5,
+                            ease: "power2.out"
+                        });
+                    });
+                    
+                    button.addEventListener('mouseleave', function(e) {
+                        gsap.to(this, {
+                            x: 0,
+                            y: 0,
+                            duration: 0.5,
+                            ease: "elastic.out(1, 0.3)"
+                        });
+                    });
+                });
+            }
+            
+            // Event listeners
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     showPage(link.dataset.page);
                 });
             });
-
-            // Event listeners for mobile nav
+            
             mobileNavLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     showPage(link.dataset.page);
                 });
             });
-
-            // Event listeners for CTA buttons
+            
             ctaLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -372,30 +784,21 @@
                 });
             });
             
-            // Event listener for logo
-            document.querySelector('.logo').addEventListener('click', (e) => {
+            logo.addEventListener('click', (e) => {
                 e.preventDefault();
                 showPage('home');
             });
-
-            // Mobile menu toggle
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
             
-            // Contact form submission
-            const contactForm = document.getElementById('contact-form');
-            const successMessage = document.getElementById('form-success-message');
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                // In a real application, you would send the form data to a server here.
-                // For this demo, we'll just show the success message.
-                contactForm.reset();
-                successMessage.classList.remove('hidden');
-                setTimeout(() => {
-                    successMessage.classList.add('hidden');
-                }, 5000); // Hide message after 5 seconds
-            });
+            mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            
+            contactForm.addEventListener('submit', handleFormSubmit);
+            
+            // Initialize animations
+            initScrollAnimations();
+            initMagneticButtons();
+            
+            // Initial page setup
+            showPage('home');
         });
     </script>
 </body>
